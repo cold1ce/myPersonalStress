@@ -12,7 +12,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 /**
- * Created by ZEBRA on 01.11.2017.
+ * DatabaseHelper
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -21,24 +21,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "mypersonalstress.db";
     private static final int DB_VERSION = 1;
     private static DatabaseHelper instance;
-
-
-    protected void createPSSScoreTable() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("CREATE TABLE IF NOT EXISTS PSSScores (_id INTEGER PRIMARY KEY AUTOINCREMENT, Datum DATETIME, PSSScore REAL)");
-    }
-
-    protected boolean addNewPSSScore(long zeit, int score) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("Datum", zeit);
-        contentValues.put("PSSScore", score);
-
-        long result = db.insert("PSSScores", null, contentValues);
-
-        return result != -1;
-    }
-
 
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -50,7 +32,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, "name", null, 1);
     }
-    @Override
+
+
+    //Erstellt eine neue Tabelle(falls noch nicht vorhanden) mit den PSSScores die über den Fragebogen ermittelt wurden, beinhaltet ID, Timestamp und den Score.
+    protected void createPSSScoreTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS PSSScores (_id INTEGER PRIMARY KEY AUTOINCREMENT, Datum DATETIME DEFAULT CURRENT_TIMESTAMP, PSSScore REAL)");
+    }
+
+    //Fügt einen neuen PSSScore hinzu, welcher zuvor über den Fragebogen ermittelt wurde.
+    protected boolean addNewPSSScore(long zeit, int score) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Datum", zeit);
+        contentValues.put("PSSScore", score);
+        long result = db.insert("PSSScores", null, contentValues);
+        return result != -1;
+    }
+
+    //Erstellt eine neue Tabelle(falls noch nicht vorhanden) für die Koeffizienten. Beinhaltet ID, Timestamp und die Koeffizienten zur jeweiligen Zeit
+    protected void createCoefficientsTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS Coefficients (_id INTEGER PRIMARY KEY AUTOINCREMENT, Datum DATETIME DEFAULT CURRENT_TIMESTAMP, coeff1 REAL, coeff2 REAL)");
+    }
+
+    //Fügt einen neuen PSSScore hinzu, welcher zuvor über den Fragebogen ermittelt wurde.
+    protected boolean addNewCoefficients(long zeit, double coeff1, double coeff2) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Datum", zeit);
+        contentValues.put("coeff1", coeff1);
+        contentValues.put("coeff2", coeff2);
+        long result = db.insert("Coefficients", null, contentValues);
+        return result != -1;
+    }
+
+
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
     }
@@ -59,6 +76,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
