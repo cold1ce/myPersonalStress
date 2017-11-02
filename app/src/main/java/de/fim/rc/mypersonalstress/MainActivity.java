@@ -1,6 +1,7 @@
 package de.fim.rc.mypersonalstress;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         final Button button1 = findViewById(R.id.button1);
         final Button button2 = findViewById(R.id.button2);
         final Button button3 = findViewById(R.id.button3);
+        final Button button4 = findViewById(R.id.button4);
+        final Button button5 = findViewById(R.id.button5);
+        final Button button6 = findViewById(R.id.button6);
         myDB = new DatabaseHelper(this, "mypersonalstress.db");
 
 
@@ -49,9 +53,48 @@ public class MainActivity extends AppCompatActivity {
                 myDB.createCoefficientsTable();
                 DateFormat df = DateFormat.getDateTimeInstance();
                 long aktuellezeit = new Date().getTime();
-                myDB.addNewCoefficients(aktuellezeit, 0.2, 0.4);
+                myDB.addNewCoefficients(aktuellezeit,  myDB.getAggrMin(),  getZufallszahl(-1,1));
             }
         });
 
+        button4.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                myDB.createTestSensorTable();
+                DateFormat df = DateFormat.getDateTimeInstance();
+                long aktuellezeit = new Date().getTime();
+                for (int i=0; i<10; i++) {
+                    myDB.addNewTestSensorValues(aktuellezeit, getZufallszahl(0, 100));
+                }
+            }
+        });
+
+        button5.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                double min = 0.0;
+                min = myDB.getAggrMin();
+                Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), "Minimum: "+min, Snackbar.LENGTH_SHORT);
+                mySnackbar.show();
+
+            }
+        });
+
+        button6.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                double x = 6.0;
+                double ualt = 9.0;
+                double oalt = 1.0;
+                int N = 3;
+                double uneu = myDB.updateMeans(x, ualt, N);
+                Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), "uneu: "+uneu+" o: "+myDB.updateStandardDeviation(x, uneu, N, oalt), Snackbar.LENGTH_SHORT);
+                mySnackbar.show();
+
+            }
+        });
+
+    }
+
+    public double getZufallszahl(int min, int max) {
+        double  random = Math.random() * (max - min) + min;
+        return random;
     }
 }

@@ -67,6 +67,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    //Erstellt eine neue Tabelle für einen Testsensor
+    protected void createTestSensorTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("CREATE TABLE IF NOT EXISTS TestSensorValues (_id INTEGER PRIMARY KEY AUTOINCREMENT, Datum DATETIME DEFAULT CURRENT_TIMESTAMP, value1 REAL)");
+    }
+
+    //Fügt einen neuen PSSScore hinzu, welcher zuvor über den Fragebogen ermittelt wurde.
+    protected boolean addNewTestSensorValues(long zeit, double value1) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("Datum", zeit);
+            contentValues.put("value1", value1);
+            long result = db.insert("TestSensorValues", null, contentValues);
+            return result != -1;
+    }
+
+    public double getZufallszahl(int min, int max) {
+        double  random = Math.random() * (max - min) + min;
+        return random;
+    }
+
+    public double getAggrMin() {
+        double min = 0.0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT min(value1) FROM TestSensorValues", null);
+        cursor.moveToLast();
+        min = cursor.getDouble(0);
+        cursor.close();
+        return min;
+    }
+
+    public double updateMeans (double x, double u, int N) {
+        double unew = u+((x-u)/N);
+        return unew;
+    }
+
+    public double updateStandardDeviation (double x, double u, int N, double o) {
+        System.out.println("übergeben: x:"+x+" u: "+u+" N: "+N+" o: "+o);
+        double zaehlerpart1 = (N+1);
+        double zaehlerpart2 = Math.pow(x, 2)+N*(Math.pow(o, 2)+Math.pow(u, 2));
+        System.out.println("x+n*u ist: "+(x+N*u));
+        double zaehlerpart3 = Math.pow((x+(N*u)), 2);
+        double zaehler = zaehlerpart1*zaehlerpart2-zaehlerpart3;
+        System.out.println("o-Berechnungen||Part1: "+zaehlerpart1+" - Part2: "+zaehlerpart2+" - Part3: "+zaehlerpart3);
+        double nenner = Math.pow((N+1), 2);
+        System.out.println("o-Berechnungen||Zähler: "+zaehler+" Nenner: "+nenner);
+        double onew = Math.sqrt(zaehler/nenner);
+        return onew;
+    }
+
+
+
+
+
+
+
 
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
