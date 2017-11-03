@@ -80,13 +80,18 @@ public class MainActivity extends AppCompatActivity {
 
         button6.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                double x = 6.0;
-                double ualt = 9.0;
-                double oalt = 1.0;
-                int N = 3;
-                double uneu = myDB.updateMeans(x, ualt, N);
+                double x = 3.0;
+                double ualt = 4.5;
+                double oalt = 0.5;
+                int N = 2;
+                /*double uneu = myDB.updateMeans(x, ualt, N);
                 Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), "uneu: "+uneu+" o: "+myDB.updateStandardDeviation(x, uneu, N, oalt), Snackbar.LENGTH_SHORT);
+                mySnackbar.show();*/
+                double zval = myDB.standardizise(x, ualt, oalt, N);
+                Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), "z-Value: "+zval, Snackbar.LENGTH_LONG);
                 mySnackbar.show();
+
+
 
             }
         });

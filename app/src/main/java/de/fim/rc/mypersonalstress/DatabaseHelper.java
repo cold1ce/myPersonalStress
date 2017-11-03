@@ -22,6 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static DatabaseHelper instance;
 
+    private static final String TAG = "DatabaseHelper";
+
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -117,6 +119,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return onew;
     }
 
+    public double standardizise(double x, double u, double o, int N) {
+        Log.d(TAG, "Standardisierung gestartet, mit x: "+x+" u: "+u+" o: "+o+" N: "+N);
+        double unew = u+((x-u)/(N+1));
+        Log.d(TAG, "Neues u: "+unew);
+        double onew = Math.sqrt(((N+1)*(Math.pow(x, 2)+N*(Math.pow(o, 2)+Math.pow(u, 2)))-(Math.pow((x+(N*u)), 2)))/(Math.pow((N+1), 2)));
+        Log.d(TAG, "Neues o: "+onew);
+        double z = ((x-unew)/onew);
+        Log.d(TAG, "z-Wert: "+z);
+        return z;
+    }
 
 
 
